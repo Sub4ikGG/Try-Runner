@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/primary"
+    tools:context=".presentation.start.StartFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:animateLayoutChanges="true"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/logo_imageView"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription=""
+            android:src="@drawable/ic_baseline_rocket_launch_24" />
+
+        <TextView
+            android:id="@+id/info_textView"
+            style="@style/text_p2_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Установка обновления..."
+            android:visibility="gone" />
+
+        <GridLayout
+            android:id="@+id/code_panel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_1"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="1"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_2"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="2"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_3"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="3"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_4"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="4"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_5"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="5"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_6"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="6"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_7"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="7"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_8"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="8"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_9"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="9"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_b"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="B"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_0"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="0"
+                android:textColor="@color/black" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_x"
+                style="@style/text_p1"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/code_background"
+                android:text="X"
+                android:textColor="@color/black" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
