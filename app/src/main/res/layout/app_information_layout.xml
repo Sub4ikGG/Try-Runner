@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView3"
+        style="@style/text_p4_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Разработчик"
+        android:textColor="@color/hard_dark_gray" />
+
+    <TextView
+        android:id="@+id/developer_textView"
+        style="@style/text_p3_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ООО &quot;Простые Варианты&quot;"
+        android:textColor="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView5"
+                style="@style/text_p4_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="Версия"
+                android:textColor="@color/hard_dark_gray" />
+
+            <TextView
+                android:id="@+id/version_textView"
+                style="@style/text_p3_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1.0.9"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView7"
+                style="@style/text_p4_light"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="Вышло в релиз"
+                android:textColor="@color/hard_dark_gray" />
+
+            <TextView
+                android:id="@+id/is_release_textView"
+                style="@style/text_p3_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Да"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

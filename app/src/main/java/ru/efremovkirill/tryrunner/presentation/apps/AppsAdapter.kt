@@ -1,5 +1,6 @@
 package ru.efremovkirill.tryrunner.presentation.apps
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +48,8 @@ class AppsAdapter(
                     binding.appVersionStatusTextView.isEnabled = false*/
                 }
             }
+
+            binding.seeAppButton.setOnCustomClickListener {  }
         }
     }
 
@@ -63,8 +66,10 @@ class AppsAdapter(
 
     fun unload() = apps
 
+    @SuppressLint("NotifyDataSetChanged")
     fun load(apps: List<AppModel>) {
         this.apps = apps
+        notifyDataSetChanged()
     }
 
     private fun AppVersionStatus.toStatus(): String {
@@ -76,6 +81,7 @@ class AppsAdapter(
     }
 
     interface OnAppInteractionListener {
+        fun onAppClick(appJson: String)
         fun onAppUpdate(appName: String, appId: Long)
     }
 }

@@ -17,9 +17,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.efremovkirill.tryrunner.BuildConfig
+import ru.efremovkirill.tryrunner.R
 import ru.efremovkirill.tryrunner.data.downloadmanager.DownloadManagerHelper
 import ru.efremovkirill.tryrunner.databinding.FragmentAppsBinding
 import ru.efremovkirill.tryrunner.presentation.BaseFragment
@@ -29,6 +31,9 @@ import java.io.File
 
 class AppsFragment : BaseFragment<FragmentAppsBinding>(), AppsAdapter.OnAppInteractionListener,
     DownloadManagerHelper.OnDownloadManagerHelperListener {
+
+    private val appsAdapter = AppsAdapter(this)
+    private val viewModel: AppsViewModel by viewModels()
 
     private val readExternalStorageRequestPermissionLauncher =
         registerForActivityResult(
@@ -46,7 +51,7 @@ class AppsFragment : BaseFragment<FragmentAppsBinding>(), AppsAdapter.OnAppInter
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-
+                //
             } else {
                 showWarning(message = "Без доступа к хранилищу - загрузка будет недоступна")
             }
@@ -58,9 +63,6 @@ class AppsFragment : BaseFragment<FragmentAppsBinding>(), AppsAdapter.OnAppInter
             onDownloadManagerHelperListener = this
         )
     }
-
-    private val appsAdapter = AppsAdapter(this)
-    private val viewModel: AppsViewModel by viewModels()
 
     private val storageRequestPermissionLauncher =
         registerForActivityResult(
@@ -247,6 +249,13 @@ class AppsFragment : BaseFragment<FragmentAppsBinding>(), AppsAdapter.OnAppInter
         super.onDestroy()
 
         requireActivity().unregisterReceiver(onDownloadComplete)
+    }
+
+    override fun onAppClick(appJson: String) {
+        val bundle = Bundle()
+        bundle.putString("app-json", appJson)
+
+        findNavController().navigate(R.id.action_appsFragment_to_appDetailFragment, bundle)
     }
 
     override fun onAppUpdate(appName: String, appId: Long) {

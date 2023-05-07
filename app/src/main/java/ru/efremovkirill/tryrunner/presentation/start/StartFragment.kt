@@ -10,14 +10,17 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInstaller
 import android.database.Cursor
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,11 +33,18 @@ import ru.efremovkirill.tryrunner.data.downloadmanager.DownloadManagerHelper
 import ru.efremovkirill.tryrunner.databinding.FragmentStartBinding
 import ru.efremovkirill.tryrunner.presentation.BaseFragment
 import ru.efremovkirill.tryrunner.presentation.utils.UIState
+import ru.efremovkirill.tryrunner.presentation.utils.pressAnimated
+import ru.efremovkirill.tryrunner.presentation.utils.setOnCustomClickListener
 import java.io.File
 
 
 class StartFragment : BaseFragment<FragmentStartBinding>(),
     DownloadManagerHelper.OnDownloadManagerHelperListener {
+
+    private val viewModel: StartViewModel by viewModels()
+
+    private var codeButtons = mutableListOf<Button>()
+    private var code = ""
 
     private val readExternalStorageRequestPermissionLauncher =
         registerForActivityResult(
@@ -65,14 +75,101 @@ class StartFragment : BaseFragment<FragmentStartBinding>(),
         )
     }
 
-    private val viewModel: StartViewModel by viewModels()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.codePanel.visibility = View.GONE
         readExternalStorageRequestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         collectAppVersion()
+        collectAuth()
+
+        with(binding) {
+            codeButtons.add(button0)
+            codeButtons.add(button1)
+            codeButtons.add(button2)
+            codeButtons.add(button3)
+            codeButtons.add(button4)
+            codeButtons.add(button5)
+            codeButtons.add(button6)
+            codeButtons.add(button7)
+            codeButtons.add(button8)
+            codeButtons.add(button9)
+            codeButtons.add(buttonB)
+            codeButtons.add(buttonX)
+        }
+
+        codeButtons.forEach { button ->
+            button.setOnClickListener {
+                if(button.text.isDigitsOnly())
+                    button.setBackgroundResource(R.drawable.code_background_active)
+                else
+                    button.pressAnimated()
+
+                pressCodeButton(code = button.text.toString())
+            }
+        }
+
+        binding.shimmerLayout.hideShimmer()
+    }
+
+    private fun pressCodeButton(code: String) {
+        when(code) {
+            "X" -> clearButtons()
+            "B" -> tryAuth()
+            else -> this.code += code
+        }
+    }
+
+    private fun tryAuth() {
+        if (code.length == 5) {
+            binding.shimmerLayout.showShimmer(true)
+
+            disableButtons()
+            viewModel.auth(code = code)
+        }
+        else
+            showWarning(message = "Неправильный код доступа")
+    }
+
+    private fun enableButtons() {
+        codeButtons.forEach {
+            it.isEnabled = false
+        }
+    }
+
+    private fun disableButtons() {
+        codeButtons.forEach {
+            it.isEnabled = false
+        }
+    }
+
+    private fun clearButtons() {
+        code = ""
+
+        codeButtons.forEach {
+            it.setBackgroundResource(R.drawable.code_background)
+        }
+    }
+
+    private fun collectAuth() {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.auth.collect { state ->
+                when(state) {
+                    is UIState.Success -> {
+                        findNavController().navigate(R.id.action_startFragment_to_main_nav_graph)
+                    }
+
+                    is UIState.Error -> {
+                        enableButtons()
+
+                        binding.shimmerLayout.hideShimmer()
+                        showError(message = state.message)
+                    }
+
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun collectAppVersion() {
@@ -83,10 +180,15 @@ class StartFragment : BaseFragment<FragmentStartBinding>(),
                     val currentVersionCode = BuildConfig.VERSION_CODE
 
                     if (appVersion.versionCode > currentVersionCode) {
-                        Toast.makeText(requireContext(), "Следующие разрешения необходимо для обновления приложений", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Следующие разрешения необходимы для обновления приложений",
+                            Toast.LENGTH_LONG
+                        ).show()
                         downloadNewAppVersion()
-                    } else
-                        findNavController().navigate(R.id.action_startFragment_to_main_nav_graph)
+                    }
+                    else
+                        binding.codePanel.visibility = View.VISIBLE
                 } else if (state is UIState.Error) {
                     showError(message = state.message)
                 }
@@ -159,7 +261,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(),
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Failed to download update.",
+                        "Ошибка загрузки обновления",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

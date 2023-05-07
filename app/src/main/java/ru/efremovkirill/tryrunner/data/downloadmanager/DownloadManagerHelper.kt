@@ -18,6 +18,9 @@ class DownloadManagerHelper(
 
         try {
             val file = File(Environment.getExternalStorageDirectory(), "Download")
+            file.deleteRecursively()
+            file.delete()
+
             if (!file.exists()) {
                 file.mkdirs()
             }

@@ -10,7 +10,8 @@ data class AppModelDTO(
     val description: String,
     val version: String,
     val versionCode: Long,
-    val logoHref: String
+    val logoHref: String,
+    val screenshots: List<String>
 ) {
     fun toModel(
         currentAppVersion: Long
@@ -22,6 +23,7 @@ data class AppModelDTO(
         version = version,
         versionCode = versionCode,
         currentAppVersion = currentAppVersion,
-        logoHref = logoHref
+        logoHref = logoHref,
+        screenshots = screenshots
     )
 }
