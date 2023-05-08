@@ -252,7 +252,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(),
                             checkFile
                         )
                     try {
-                        installApplication(apkUri)
+                        downloadManagerHelper.installApplication(context = requireContext(), apkUri)
                     }
                     catch (e: Exception) {
                         Toast.makeText(requireContext(), "${e.message}", Toast.LENGTH_LONG).show()
@@ -268,31 +268,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(),
                 cursor.close()
             }
         }
-    }
-
-    fun installApplication(apkUri: Uri) {
-        val packageInstaller = requireContext().packageManager.packageInstaller
-        val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
-        val sessionId = packageInstaller.createSession(params)
-        val session = packageInstaller.openSession(sessionId)
-        val outputStream = session.openWrite("ru.efremovkirill.tryrunner", 0, -1)
-        val inputStream = requireContext().contentResolver.openInputStream(apkUri)
-        val buffer = ByteArray(65536)
-        var c: Int
-
-        while (inputStream!!.read(buffer).also { c = it } != -1) {
-            outputStream.write(buffer, 0, c)
-        }
-
-        session.fsync(outputStream)
-        inputStream.close()
-        outputStream.close()
-
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
-        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        val pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, 0)
-        session.commit(pendingIntent.intentSender)
     }
 
     override fun getViewBinding(): FragmentStartBinding {

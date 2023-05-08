@@ -118,13 +118,11 @@ class AppsFragment : BaseFragment<FragmentAppsBinding>(), AppsAdapter.OnAppInter
                     is UIState.Success -> {
                         val apps = (state.data ?: emptyList()).map {
                             it.toModel(
-                                getAppVersionOnDevice(it.packageName)
+                                downloadManagerHelper.getAppVersionOnDevice(context = requireContext(), it.packageName)
                             )
                         }
 
                         val oldApps = appsAdapter.unload()
-                        if (apps != oldApps && oldApps.isNotEmpty()) showInfo(message = "Появились изменения в приложениях")
-
                         val diffUtil = AppsDiffUtil(
                             oldList = oldApps,
                             newList = apps
@@ -151,94 +149,11 @@ class AppsFragment : BaseFragment<FragmentAppsBinding>(), AppsAdapter.OnAppInter
         }
     }
 
-    private fun getAppVersionOnDevice(packageName: String): Long {
-        var version = -1L
-
-        try {
-            val pm = requireContext().packageManager
-            val pInfo = pm.getPackageInfo(packageName, 0)
-            version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                pInfo.longVersionCode
-            } else pInfo.versionCode.toLong()
-        } catch (e: Exception) {
-            Log.e("Download", "getAppVersionOnDevice: ${e.printStackTrace()}")
-        }
-
-        return version
-    }
-
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         @SuppressLint("Range")
         override fun onReceive(ctxt: Context, intent: Intent) {
-            getFileNameAndOpenDownloadDirectory(intent)
+            downloadManagerHelper.getFileNameAndOpenDownloadDirectory(context = requireContext(), intent)
         }
-    }
-
-    @SuppressLint("Range")
-    private fun getFileNameAndOpenDownloadDirectory(intent: Intent) {
-        val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-        val downloadManager =
-            context?.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
-        val query = DownloadManager.Query().setFilterById(downloadId)
-        val cursor = downloadManager?.query(query)
-        if (cursor != null && cursor.moveToFirst()) {
-            val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-            if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                val uriString =
-                    cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-
-                val uri = Uri.fromFile(File(uriString))
-                val path = uri.path // это путь к загруженному файлу
-                val fileName = path?.substringAfterLast("/") // это название файла
-
-                val checkFile = File(
-                    Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_DOWNLOADS
-                    ), "try_runner/$fileName"
-                )
-
-                val apkUri =
-                    FileProvider.getUriForFile(
-                        requireContext(),
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        checkFile
-                    )
-
-                try {
-                    installApplication(apkUri)
-                }
-                catch (e: Exception) {
-                    Toast.makeText(requireContext(), "${e.message}", Toast.LENGTH_LONG).show()
-                    Log.e("InstallApplication", "onReceive: ${e.printStackTrace()}")
-                }
-            }
-        }
-        cursor?.close()
-    }
-
-    private fun installApplication(apkUri: Uri) {
-        val packageInstaller = requireContext().packageManager.packageInstaller
-        val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
-        val sessionId = packageInstaller.createSession(params)
-        val session = packageInstaller.openSession(sessionId)
-        val outputStream = session.openWrite("ru.efremovkirill.tryrunner", 0, -1)
-        val inputStream = requireContext().contentResolver.openInputStream(apkUri)
-        val buffer = ByteArray(65536)
-        var c: Int
-
-        while (inputStream!!.read(buffer).also { c = it } != -1) {
-            outputStream.write(buffer, 0, c)
-        }
-
-        session.fsync(outputStream)
-        inputStream.close()
-        outputStream.close()
-
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
-        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        val pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, 0)
-        session.commit(pendingIntent.intentSender)
     }
 
     override fun getViewBinding(): FragmentAppsBinding {

@@ -11,6 +11,7 @@ import ru.efremovkirill.tryrunner.R
 import ru.efremovkirill.tryrunner.databinding.AppLayoutBinding
 import ru.efremovkirill.tryrunner.domain.models.AppModel
 import ru.efremovkirill.tryrunner.presentation.utils.AppVersionStatus
+import ru.efremovkirill.tryrunner.presentation.utils.JsonUtils
 import ru.efremovkirill.tryrunner.presentation.utils.setOnCustomClickListener
 
 class AppsAdapter(
@@ -49,7 +50,11 @@ class AppsAdapter(
                 }
             }
 
-            binding.seeAppButton.setOnCustomClickListener {  }
+            binding.seeAppButton.setOnCustomClickListener {
+                onAppInteractionListener.onAppClick(
+                    JsonUtils.gson().toJson(app)
+                )
+            }
         }
     }
 
